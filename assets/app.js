@@ -48,9 +48,11 @@ const clearButton = document
   .addEventListener("click", () => {
     canvas.width = canvas.width;
   });
+
 const downloadButton = document.getElementById("downloadButton");
 downloadButton.addEventListener("click", () => {
-  downloadButton.href = canvas.toDataURL(MIME - TYPE);
+  const pngDataUrl = canvas.toDataURL("image/jpg");
+  downloadButton.href = pngDataUrl;
 });
 const mousedown = (e) => {
   e.preventDefault();
