@@ -1,12 +1,26 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+const container = document.getElementsByClassName("container");
+const initialScreen = document.getElementsByClassName("initial-screen");
+
 //variables
 let selectedColor = "rgba(0,0,0,1)";
 let selectedThickness;
 let isDrawing = false;
 let startX, startY;
 
+//selector menu
+
+const clearCanvas = document
+  .getElementById("clearCanvas")
+  .addEventListener("click", () => {
+    container[0].classList.remove("hidden");
+    initialScreen[0].classList.add("hidden");
+  });
+
+const editImageBtn = (document.getElementById("uploadImageBtn").onchange =
+  drawImage);
 //thickness
 const thickness = document.getElementById("thickness");
 let lineThickness = thickness.value;
@@ -85,17 +99,16 @@ canvas.addEventListener("mousedown", mousedown);
 canvas.addEventListener("mousemove", mousemove);
 canvas.addEventListener("mouseup", mouseup);
 
-const img = new Image();
-img.addEventListener("load", () => {});
-
-document.getElementById("uploadImage").onchange = function (e) {
-  const img = new Image();
-  img.onload = drawImage;
-  img.onerror = failed;
-  img.src = URL.createObjectURL(this.files[0]);
-};
+// document.getElementById("uploadImage").onchange = function (e) {
+//   const img = new Image();
+//   img.onload = drawImage;
+//   img.onerror = failed;
+//   img.src = URL.createObjectURL(this.files[0]);
+// };
 
 function drawImage() {
+  container[0].classList.remove("hidden");
+  initialScreen[0].classList.add("hidden");
   canvas.width = this.width;
   canvas.height = this.height;
   ctx.drawImage(this, 0, 0);
@@ -136,4 +149,3 @@ sepiaBtn.addEventListener("click", () => {
   console.log("object");
 });
 // FILTRO SEPIA
-

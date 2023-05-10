@@ -11,6 +11,9 @@ main {
   width: 100%;
   text-align: center;
 }
+.hidden {
+  visibility: hidden;
+}
 .initial-screen {
   position: absolute;
   z-index: 1;

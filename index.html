@@ -13,12 +13,12 @@
         <div class="message">
           <h1>Do you prefere to use an image or a white canvas?</h1>
           <div class="button-container">
-            <button>Clear canvas</button>
-            <button>Edit a picture</button>
+            <button id="clearCanvas">Clear canvas</button>
+            <input id="uploadImageBtn" type="file">Edit a picture</input>
           </div>
         </div>
       </div>
-      <div class="container">
+      <div class="container hidden">
         <div class="panel">
           <div class="color-list-container">
             <ul class="color-list">
@@ -90,7 +90,6 @@
             <ul>
               <li id="clearButton">CLEAR</li>
               <li><a id="downloadButton" href="#" download>download</a></li>
-              <li><input type="file" id="uploadImage" /></li>
             </ul>
           </div>
           <div class="filters-container">
