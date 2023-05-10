@@ -107,15 +107,33 @@ function failed() {
 //FILTERS
 
 //NEGATIVE
-const negativeButton = document.getElementById("negative");
-negativeButton.addEventListener("click", () => {
-  let data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-  let pixels = data.data;
-  for (let i = 0; i < data.data.length; i += 4) {
+const negativebtn = document.getElementById("negative");
+negativebtn.addEventListener("click", () => {
+  let imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+  let pixels = imageData.data;
+  for (let i = 0; i < pixels.length; i += 4) {
     pixels[i] = 255 - pixels[i]; // rojo
     pixels[i + 1] = 255 - pixels[i + 1]; // verde
     pixels[i + 2] = 255 - pixels[i + 2]; // azul
   }
-  ctx.putImageData(data, 0, 0);
+  ctx.putImageData(imageData, 0, 0);
   console.log("object");
 });
+
+const sepiaBtn = document.getElementById("sepia");
+sepiaBtn.addEventListener("click", () => {
+  let imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+  let pixels = imageData.data;
+  for (let i = 0; i < pixels.length; i += 4) {
+    const r = pixels[i];
+    const g = pixels[i + 1];
+    const b = pixels[i + 2];
+    pixels[i] = Math.min(0.393 * r + 0.769 * g + 0.189 * b, 255);
+    pixels[i + 1] = Math.min(0.349 * r + 0.686 * g + 0.168 * b, 255);
+    pixels[i + 2] = Math.min(0.272 * r + 0.534 * g + 0.131 * b, 255);
+  }
+  ctx.putImageData(imageData, 0, 0);
+  console.log("object");
+});
+// FILTRO SEPIA
+

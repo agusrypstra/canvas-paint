@@ -9,8 +9,14 @@
   </head>
   <body>
     <main>
-      <div class="title">
-        <h1>My Paint</h1>
+      <div class="initial-screen">
+        <div class="message">
+          <h1>Do you prefere to use an image or a white canvas?</h1>
+          <div class="button-container">
+            <button>Clear canvas</button>
+            <button>Edit a picture</button>
+          </div>
+        </div>
       </div>
       <div class="container">
         <div class="panel">
@@ -90,10 +96,13 @@
           <div class="filters-container">
             <ul>
               <li id="negative">Negative</li>
+              <li id="sepia">Sepia</li>
             </ul>
           </div>
         </div>
-        <canvas id="canvas"></canvas>
+        <div class="canvas-container">
+          <canvas id="canvas"></canvas>
+        </div>
       </div>
     </main>
   </body>
