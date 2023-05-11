@@ -96,11 +96,25 @@
             <ul>
               <li id="negative">Negative</li>
               <li id="sepia">Sepia</li>
+              <p>Binarization</p>
+              <input type="range" 
+              id="binarization"
+              min="0"
+              max="255"
+              step="1"
+              value="0">
+              <p>brillo</p>
+              <input type="range"
+              id="brightness"
+              min="-100"
+              max="100"
+              step="1"
+              value="0">
             </ul>
           </div>
         </div>
         <div class="canvas-container">
-          <canvas id="canvas"></canvas>
+          <canvas id="canvas" width="900" height="600"></canvas>
         </div>
       </div>
     </main>
