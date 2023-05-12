@@ -95,21 +95,32 @@
           <div class="filters-container">
             <ul>
               <li id="negative">Negative</li>
-              <li id="sepia">Sepia</li>
+              <p>sepia</p>
+              <input type="range" min="0" max="1" step="0.1" value="0" id="sepia-range">
               <p>Binarization</p>
               <input type="range" 
-              id="binarization"
+              id="binarization-range"
               min="0"
               max="255"
               step="1"
               value="0">
               <p>brillo</p>
               <input type="range"
-              id="brightness"
+              id="brightness-range"
               min="-100"
               max="100"
               step="1"
               value="0">
+              <p>saturation</p>
+              <input type="range" 
+              id="saturation-range" 
+              min="0" 
+              max="5" 
+              step="0.01" 
+              value="1" />
+              <li id="sobel-btn">asdadas</li> 
+              <li id="blur-btn">BLUR</li>
+              <input type="range" id="blur-range" min="0" max="10" step="0.5" value="0">
             </ul>
           </div>
         </div>
