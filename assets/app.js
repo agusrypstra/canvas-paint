@@ -70,8 +70,8 @@ function drawNewImage() {
   canvas.height = canvas.offsetHeight;
   ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
 }
-const clearButton = document
-  .getElementById("clearButton")
+const clearBtn = document
+  .getElementById("clear-btn")
   .addEventListener("click", () => {
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
@@ -79,10 +79,10 @@ const clearButton = document
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   });
 
-const downloadButton = document.getElementById("downloadButton");
-downloadButton.addEventListener("click", () => {
+const downloadBtn = document.getElementById("download-btn");
+downloadBtn.addEventListener("click", () => {
   const pngDataUrl = canvas.toDataURL("image/jpg");
-  downloadButton.href = pngDataUrl;
+  downloadBtn.href = pngDataUrl;
 });
 
 //-------------------FILTERS-----------------------//
@@ -90,11 +90,11 @@ downloadButton.addEventListener("click", () => {
 //brightness-------------------------------------------
 document.getElementById("brightness-range").addEventListener("input", (e) => {
   let intensity = parseInt(e.target.value);
-  ctx.drawImage(img, 0, 0, img.width, img.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   modifyBrightness(intensity);
 });
 const modifyBrightness = (intensity) => {
-  let imageData = ctx.getImageData(0, 0, img.width, img.width);
+  let imageData = ctx.getImageData(0, 0, canvas.width, canvas.width);
   let data = imageData.data;
   for (var i = 0; i < data.length; i += 4) {
     data[i] += intensity;
@@ -105,16 +105,21 @@ const modifyBrightness = (intensity) => {
   ctx.putImageData(imageData, 0, 0);
 };
 //NEGATIVE---------------------------------------------
-document.getElementById("negative").addEventListener("click", () => {
+document.getElementById("negative-range").addEventListener("input", (e) => {
+  let intensity = parseInt(e.target.value);
+  ctx.drawImage(img, 0, 0, img.width, img.height);
+  applyNegativeFilter(intensity);
+});
+const applyNegativeFilter = (intensity) => {
   let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   let pixels = imageData.data;
   for (let i = 0; i < pixels.length; i += 4) {
-    pixels[i] = 255 - pixels[i]; // rojo
-    pixels[i + 1] = 255 - pixels[i + 1]; // verde
-    pixels[i + 2] = 255 - pixels[i + 2]; // azul
+    pixels[i] = intensity - pixels[i]; // rojo
+    pixels[i + 1] = intensity - pixels[i + 1]; // verde
+    pixels[i + 2] = intensity - pixels[i + 2]; // azul
   }
   ctx.putImageData(imageData, 0, 0);
-});
+};
 //SATURATION-----------------------------------------------
 document.getElementById("saturation-range").addEventListener("input", (e) => {
   let saturation = parseFloat(e.target.value);
@@ -210,7 +215,7 @@ document.getElementById("blur-range").addEventListener("click", (e) => {
   aplicarDesenfoque(blurValue);
 });
 function aplicarDesenfoque(radio) {
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const { data, width, height } = imageData;
 
   for (let y = 0; y < height; y++) {
@@ -248,10 +253,11 @@ function aplicarDesenfoque(radio) {
   ctx.putImageData(imageData, 0, 0);
 }
 // FILTRO DE SOBEL
-document.getElementById("sobel-btn").addEventListener("click", (e) => {
-  aplicarDeteccionBordes();
+document.getElementById("sobel-range").addEventListener("click", (e) => {
+  let intensity = parseFloat(e.target.value);
+  aplicarDeteccionBordes(intensity);
 });
-const aplicarDeteccionBordes = () => {
+const aplicarDeteccionBordes = (intensity) => {
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const { data, width, height } = imageData;
 
@@ -262,7 +268,7 @@ const aplicarDeteccionBordes = () => {
     [-1, -1, -1],
   ];
 
-  const factor = 1; // Factor de escala
+  const factor = intensity; // Factor de escala
   const offset = 0; // Offset de escala
 
   // Crear una copia del imageData para almacenar los resultados
@@ -300,11 +306,11 @@ const aplicarDeteccionBordes = () => {
 //SEPIA-------------------------------------------------
 document.getElementById("sepia-range").addEventListener("input", (e) => {
   let intensity = parseFloat(e.target.value);
-  ctx.drawImage(img, 0, 0, img.width, img.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   modifySepia(intensity);
 });
 const modifySepia = (intensity) => {
-  let imageData = ctx.getImageData(0, 0, img.width, img.width);
+  let imageData = ctx.getImageData(0, 0, canvas.width, canvas.width);
   let pixels = imageData.data;
   for (let i = 0; i < pixels.length; i += 4) {
     var r = pixels[i];
@@ -341,6 +347,7 @@ const modifyBinarization = (umbral) => {
   }
   ctx.putImageData(imageData, 0, 0);
 };
+
 const mousedown = (e) => {
   e.preventDefault();
   isDrawing = true;
