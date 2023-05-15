@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="container hidden">
-        <div class="panel">
+        <div class="panel left-panel">
           <div class="color-list-container">
             <ul class="color-list">
               <li
@@ -87,85 +87,63 @@
               type="range"
               name="thickness"
               id="thickness"
-              min="1"
-              max="10"
+              min="5"
+              max="15"
               step="1"
-              value="2.5"
+              value="5"
             />
           </div>
-          <div class="filters-container">
-              <p>Negative</p>
-              <input
-              type="range"
-              min="0"
-                max="255"
-                step="1"
-                value="0"
-                id="negative-range"
-                />
-              <p>brillo</p>
-              <input
-                type="range"
-                id="brightness-range"
-                min="-100"
-                max="100"
-                step="1"
-                value="0"
-              />
-              <p>Binarization</p>
-              <input
-                type="range"
-                id="binarization-range"
-                min="0"
-                max="255"
-                step="1"
-                value="0"
-              />
-              <p>sepia</p>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value="0"
-                id="sepia-range"
-              />
-              <p>saturation</p>
-              <input
-                type="range"
-                id="saturation-range"
-                min="0"
-                max="5"
-                step="0.01"
-                value="0"
-              />
-              <p>Sobel</p>
-              <input type="range"
-              id="sobel-range"
-              value="0"
-              step="0.5"
-              min="0"
-              max="20" />
-              <p>BLUR</p>
-              <input
-                type="range"
-                id="blur-range"
-                min="0"
-                max="10"
-                step="0.5"
-                value="0"
-              />
-          </div>
           <div class="buttons-container">
-
               <i class="bi bi-x-circle" id="clear-btn"></i>
               <a id="download-btn" href="#" download><i class="bi bi-download"></i>
               </a>
-
           </div>          
         </div>
         <div class="canvas-container">
           <canvas id="canvas" width="900" height="600"></canvas>
+        </div>
+        <div class="panel right-panel">
+            <div id="negative-btn" class="filter">
+              <img src="img/messi-negative.png" alt="filter">
+              <p class="filter-name">Negative</p>
+            </div>
+            <div class="filter" id="binarization-btn">
+              <img src="img/messi-binarization.png" alt="filter">
+              <p class="filter-name">Binarization</p>
+            </div>
+            <div class="filter" id="sepia-btn">
+              <img src="img/messi-sepia.png" alt="filter">
+              <p class="filter-name">Sepia</p>
+            </div>
+            <div class="filter" id="saturation-btn">
+              <img src="img/messi-saturation.png" alt="filter">
+              <p class="filter-name">Saturation</p>
+            </div>
+            <p>brillo</p>
+            <input
+              type="range"
+              id="brightness-range"
+              min="-100"
+              max="100"
+              step="1"
+              value="0"
+            />
+            <p>Sobel</p>
+            <input type="range"
+            id="sobel-range"
+            value="0"
+            step="0.5"
+            min="0"
+            max="20" />
+            <p>BLUR</p>
+            <input
+              type="range"
+              id="blur-range"
+              min="0"
+              max="10"
+              step="0.5"
+              value="0"
+            />
         </div>
       </div>
     </main>

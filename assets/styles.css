@@ -79,19 +79,41 @@ a {
   margin: none;
 }
 .panel {
+  display: flex;
   justify-content: space-around;
   background-color: rgba(200, 200, 200, 1);
   height: 100%;
-  width: 15%;
-  display: flex;
   flex-direction: column;
   margin: none;
+  width: 15%;
+}
+.panel p {
+  margin: 0;
 }
 .tools-container {
   color: rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
+}
+.filter {
+  padding: 2px;
+  margin: 0;
+  color: azure;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}
+.filter-selected {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.filter p {
+  position: absolute;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.filter img {
+  width: 85%;
 }
 .buttons-container {
   display: flex;

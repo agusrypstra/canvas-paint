@@ -10,7 +10,8 @@ let selectedColor = "rgba(0,0,0,1)";
 let selectedThickness;
 let isDrawing = false;
 let startX, startY;
-let lineThickness;
+let lineThickness = 5;
+let filterSelected;
 
 //thickness
 document.getElementById("thickness").addEventListener("change", (e) => {
@@ -105,25 +106,23 @@ const modifyBrightness = (intensity) => {
   ctx.putImageData(imageData, 0, 0);
 };
 //NEGATIVE---------------------------------------------
-document.getElementById("negative-range").addEventListener("input", (e) => {
-  let intensity = parseInt(e.target.value);
-  ctx.drawImage(img, 0, 0, img.width, img.height);
-  applyNegativeFilter(intensity);
+document.getElementById("negative-btn").addEventListener("click", () => {
+  applyNegativeFilter();
 });
-const applyNegativeFilter = (intensity) => {
+const applyNegativeFilter = () => {
   let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   let pixels = imageData.data;
   for (let i = 0; i < pixels.length; i += 4) {
-    pixels[i] = intensity - pixels[i]; // rojo
-    pixels[i + 1] = intensity - pixels[i + 1]; // verde
-    pixels[i + 2] = intensity - pixels[i + 2]; // azul
+    pixels[i] = 255 - pixels[i]; // rojo
+    pixels[i + 1] = 255 - pixels[i + 1]; // verde
+    pixels[i + 2] = 255 - pixels[i + 2]; // azul
   }
   ctx.putImageData(imageData, 0, 0);
 };
 //SATURATION-----------------------------------------------
-document.getElementById("saturation-range").addEventListener("input", (e) => {
-  let saturation = parseFloat(e.target.value);
-  ctx.drawImage(img, 0, 0, img.width, img.height);
+document.getElementById("saturation-btn").addEventListener("click", (e) => {
+  let saturation = 5;
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   modifySaturation(saturation);
 });
 const modifySaturation = (saturation) => {
@@ -303,13 +302,11 @@ const aplicarDeteccionBordes = (intensity) => {
   }
   ctx.putImageData(new ImageData(copiaData, width, height), 0, 0);
 };
-//SEPIA-------------------------------------------------
-document.getElementById("sepia-range").addEventListener("input", (e) => {
-  let intensity = parseFloat(e.target.value);
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  modifySepia(intensity);
+//SEPIA
+document.getElementById("sepia-btn").addEventListener("click", () => {
+  modifySepia();
 });
-const modifySepia = (intensity) => {
+const modifySepia = () => {
   let imageData = ctx.getImageData(0, 0, canvas.width, canvas.width);
   let pixels = imageData.data;
   for (let i = 0; i < pixels.length; i += 4) {
@@ -321,21 +318,22 @@ const modifySepia = (intensity) => {
     var sepiaG = r * 0.349 + g * 0.686 + b * 0.168;
     var sepiaB = r * 0.272 + g * 0.534 + b * 0.131;
 
-    pixels[i] = sepiaR * intensity + r * (1 - intensity);
-    pixels[i + 1] = sepiaG * intensity + g * (1 - intensity);
-    pixels[i + 2] = sepiaB * intensity + b * (1 - intensity);
+    pixels[i] = sepiaR * 1;
+    pixels[i + 1] = sepiaG * 1;
+    pixels[i + 2] = sepiaB * 1;
   }
   ctx.putImageData(imageData, 0, 0);
 };
-document.getElementById("binarization-range").addEventListener("input", (e) => {
-  let umbral = parseFloat(e.target.value);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(img, 0, 0);
+document.getElementById("binarization-btn").addEventListener("click", () => {
+  let umbral = 100;
+  if (img) {
+    ctx.drawImage(img, 0, 0);
+  }
   modifyBinarization(umbral);
 });
 
 const modifyBinarization = (umbral) => {
-  let imageData = ctx.getImageData(0, 0, img.width, img.height);
+  let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   let pixels = imageData.data;
   for (let i = 0; i < pixels.length; i += 4) {
     let rojo = pixels[i];
