@@ -13,14 +13,16 @@ let startX, startY;
 let lineThickness = 5;
 let anchoImagen;
 let altoImagen;
-let imageDataCopy;
+let layers;
 
+const img = new Image();
 const filters = {
   negative: false,
   binarization: false,
   sepia: false,
   saturation: false,
 };
+
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 /////////////////////////LOAD SETTINGS/////////////////////
@@ -34,6 +36,14 @@ window.addEventListener("load", () => {
       eraserStatus = false;
     });
   });
+  const filtersBtn = document.querySelectorAll(".filter-img");
+  filtersBtn.forEach((element) => {
+    element.addEventListener("click", (e) => {
+      let filter = e.target.dataset.filter;
+      let node = e.target.parentNode;
+      applyFilter(filter, node);
+    });
+  });
 });
 //selector menu
 const clearCanvas = document
@@ -42,7 +52,7 @@ const clearCanvas = document
     printClearCanvas();
     removePresentation();
   });
-const img = new Image();
+
 function printClearCanvas() {
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -121,15 +131,6 @@ downloadBtn.addEventListener("click", () => {
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
-const filtersBtn = document.querySelectorAll(".filter-img");
-filtersBtn.forEach((element) => {
-  element.addEventListener("click", (e) => {
-    let filter = e.target.dataset.filter;
-    let node = e.target.parentNode;
-    applyFilter(filter, node);
-  });
-});
-
 function applyFilter(filter, node) {
   switch (filter) {
     case "negative":
@@ -161,13 +162,13 @@ brightnessRange.addEventListener("change", (e) => {
 const modifyBrightness = (intensity) => {
   let imageData = ctx.getImageData(0, 0, canvas.width, canvas.width);
   let data = imageData.data;
-  for (var i = 0; i < data.length; i += 4) {
-    const newR = data[i] + intensity;
-    const newG = data[i + 1] + intensity;
-    const newB = data[i + 2] + intensity;
-    imageData.data[i] = newR;
-    imageData.data[i + 1] = newG;
-    imageData.data[i + 2] = newB;
+  for (let i = 0; i < data.length; i += 4) {
+    let r = data[i] + intensity;
+    let g = data[i + 1] + intensity;
+    let b = data[i + 2] + intensity;
+    imageData.data[i] = r;
+    imageData.data[i + 1] = g;
+    imageData.data[i + 2] = b;
   }
   // Put the modified pixel data back on the canvas
   ctx.putImageData(imageData, 0, 0); //se pasan los nuevos valores al context
@@ -235,7 +236,7 @@ sobelRange.addEventListener("click", (e) => {
 //funcion para la deteccion de bordes
 const aplicarDeteccionBordes = (intensity) => {
   let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const { data, width, height } = imageData;
+  let { data, width, height } = imageData;
 
   // matriz para la detección de bordes
   const matriz = [
@@ -311,23 +312,24 @@ const saturationFilter = (node) => {
   let saturation = 5;
   if (!filters.saturation) {
     let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    for (var i = 0; i < imageData.data.length; i += 4) {
-      var r = imageData.data[i];
-      var g = imageData.data[i + 1];
-      var b = imageData.data[i + 2];
+    let data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      let r = data[i];
+      let g = data[i + 1];
+      let b = data[i + 2];
 
       // se pasa el color a hsl
-      var hsl = rgbToHsl(r, g, b);
+      let hsl = rgbToHsl(r, g, b);
 
       // se ajusta la saturacion
       hsl[1] *= saturation;
 
       // pasamos de nuevo a rgb
-      var rgb = hslToRgb(hsl[0], hsl[1], hsl[2]);
+      let rgb = hslToRgb(hsl[0], hsl[1], hsl[2]);
 
-      imageData.data[i] = rgb[0]; // r
-      imageData.data[i + 1] = rgb[1]; // g
-      imageData.data[i + 2] = rgb[2]; // b
+      data[i] = rgb[0]; // r
+      data[i + 1] = rgb[1]; // g
+      data[i + 2] = rgb[2]; // b
     }
 
     ctx.putImageData(imageData, 0, 0);
@@ -346,13 +348,14 @@ const sepiaFilter = (node) => {
     let imageData = ctx.getImageData(0, 0, canvas.width, canvas.width);
     let data = imageData.data;
     for (let i = 0; i < data.length; i += 4) {
-      var r = data[i];
-      var g = data[i + 1];
-      var b = data[i + 2];
+      let r = data[i];
+      let g = data[i + 1];
+      let b = data[i + 2];
 
-      var sepiaR = r * 0.393 + g * 0.769 + b * 0.189;
-      var sepiaG = r * 0.349 + g * 0.686 + b * 0.168;
-      var sepiaB = r * 0.272 + g * 0.534 + b * 0.131;
+      //se aplica el kernel para la tranformacion del rgb a sepia
+      let sepiaR = r * 0.393 + g * 0.769 + b * 0.189;
+      let sepiaG = r * 0.349 + g * 0.686 + b * 0.168;
+      let sepiaB = r * 0.272 + g * 0.534 + b * 0.131;
 
       data[i] = sepiaR * 1;
       data[i + 1] = sepiaG * 1;
@@ -370,17 +373,17 @@ const sepiaFilter = (node) => {
 
 //funcion binarizacion
 const binarizationFilter = (node) => {
-  let umbral = 100;
+  let umbral = 120;
   if (!filters.binarization) {
     let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     let data = imageData.data;
     for (let i = 0; i < data.length; i += 4) {
-      let rojo = data[i];
-      let verde = data[i + 1];
-      let azul = data[i + 2];
-      let escalaDeGrises = (rojo + verde + azul) / 3;
-      let colorBinarizado = escalaDeGrises >= umbral ? 255 : 0;
-      data[i] = data[i + 1] = data[i + 2] = colorBinarizado;
+      let r = data[i];
+      let g = data[i + 1];
+      let b = data[i + 2];
+      let greyScale = (r + g + b) / 3;
+      let binarizateColor = greyScale >= umbral ? 255 : 0;
+      data[i] = data[i + 1] = data[i + 2] = binarizateColor;
     }
     ctx.putImageData(imageData, 0, 0);
     filters.binarization = true;
@@ -402,21 +405,29 @@ const binarizationFilter = (node) => {
 ///////////////////////////////////////////////////////////
 
 ///////FUNCIONES///////
+function hueToRgb(p, q, t) {
+  if (t < 0) t += 1;
+  if (t > 1) t -= 1;
+  if (t < 1 / 6) return p + (q - p) * 6 * t;
+  if (t < 1 / 2) return q;
+  if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+  return p;
+}
 function rgbToHsl(r, g, b) {
   r /= 255;
   g /= 255;
   b /= 255;
 
-  var max = Math.max(r, g, b);
-  var min = Math.min(r, g, b);
-  var h,
+  let max = Math.max(r, g, b);
+  let min = Math.min(r, g, b);
+  let h,
     s,
     l = (max + min) / 2;
 
   if (max === min) {
     h = s = 0; // Desaturado
   } else {
-    var d = max - min;
+    let d = max - min;
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
 
     switch (max) {
@@ -437,22 +448,13 @@ function rgbToHsl(r, g, b) {
   return [h, s, l];
 }
 function hslToRgb(h, s, l) {
-  var r, g, b;
+  let r, g, b;
 
   if (s === 0) {
     r = g = b = l; // Desaturado
   } else {
-    function hueToRgb(p, q, t) {
-      if (t < 0) t += 1;
-      if (t > 1) t -= 1;
-      if (t < 1 / 6) return p + (q - p) * 6 * t;
-      if (t < 1 / 2) return q;
-      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-      return p;
-    }
-
-    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    var p = 2 * l - q;
+    let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    let p = 2 * l - q;
 
     r = hueToRgb(p, q, h + 1 / 3);
     g = hueToRgb(p, q, h);
