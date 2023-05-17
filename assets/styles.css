@@ -96,6 +96,11 @@ a {
   flex-direction: row;
   justify-content: space-evenly;
 }
+.brightness-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
 .filter {
   padding: 2px;
   margin: 0;
@@ -125,6 +130,9 @@ a {
 }
 .bi:hover {
   color: black;
+}
+#upload-btn:hover {
+  color: rgb(74, 199, 93);
 }
 #clear-btn:hover {
   color: rgb(199, 74, 74);
