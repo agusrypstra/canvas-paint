@@ -101,6 +101,9 @@ a {
   flex-direction: row;
   justify-content: space-around;
 }
+.selected-filter {
+  background-color: rgba(0, 0, 0, 0.5);
+}
 .filter {
   padding: 2px;
   margin: 0;
@@ -108,9 +111,6 @@ a {
   display: flex;
   justify-content: center;
   align-items: end;
-}
-.filter-selected {
-  background-color: rgba(0, 0, 0, 0.5);
 }
 .filter p {
   position: absolute;

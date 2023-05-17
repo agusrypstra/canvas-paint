@@ -11,10 +11,16 @@ let selectedThickness;
 let isDrawing = false;
 let startX, startY;
 let lineThickness = 5;
-let filterSelected;
 let anchoImagen;
 let altoImagen;
+let imageDataCopy;
 
+const filters = {
+  negative: false,
+  binarization: false,
+  sepia: false,
+  saturation: false,
+};
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 /////////////////////////LOAD SETTINGS/////////////////////
@@ -33,11 +39,14 @@ window.addEventListener("load", () => {
 const clearCanvas = document
   .getElementById("clearCanvas")
   .addEventListener("click", () => {
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    printClearCanvas();
     removePresentation();
   });
 const img = new Image();
+function printClearCanvas() {
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
 document.getElementById("uploadImageBtn").onchange = function (e) {
   img.onload = drawNewImage;
   img.src = URL.createObjectURL(this.files[0]);
@@ -80,10 +89,12 @@ document.getElementById("reload-img-btn").addEventListener("click", () => {
   brightnessRange.value = 0;
   blurRange.value = 0;
   sobelRange.value = 0;
+  filters.binarization = false;
+  filters.sepia = false;
+  filters.saturation = false;
+  filters.negative = false;
   if (img) {
     ctx.drawImage(img, 0, 0, anchoImagen, altoImagen);
-  } else {
-    ctx.fillRect(0, 0, img.width, img.height);
   }
 });
 //boton para volver al menu inicial y elegir si se quiere subir una nueva imagen o un nuevo canvas
@@ -109,6 +120,34 @@ downloadBtn.addEventListener("click", () => {
 /////////////////////////FILTROS///////////////////////////
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
+
+const filtersBtn = document.querySelectorAll(".filter-img");
+filtersBtn.forEach((element) => {
+  element.addEventListener("click", (e) => {
+    let filter = e.target.dataset.filter;
+    let node = e.target.parentNode;
+    applyFilter(filter, node);
+  });
+});
+
+function applyFilter(filter, node) {
+  switch (filter) {
+    case "negative":
+      negativeFilter(node);
+      break;
+    case "sepia":
+      sepiaFilter(node);
+      break;
+    case "saturation":
+      saturationFilter(node);
+      break;
+    case "binarization":
+      binarizationFilter(node);
+      break;
+    default:
+      break;
+  }
+}
 
 ////////////////BRILLO///////////////////
 //range que maneja el brillo
@@ -241,100 +280,118 @@ const aplicarDeteccionBordes = (intensity) => {
 };
 ////////////////SOBEL///////////////////
 
-////////////////NEGATIVO///////////////////
-//boton para el filtro negativo
-document.getElementById("negative-btn").addEventListener("click", () => {
-  applyNegativeFilter();
-});
-//funcion para aplicar el filtro negativo
-const applyNegativeFilter = () => {
-  let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  let data = imageData.data;
-  for (let i = 0; i < data.length; i += 4) {
-    data[i] = 255 - data[i]; // rojo
-    data[i + 1] = 255 - data[i + 1]; // verde
-    data[i + 2] = 255 - data[i + 2]; // azul
+//filtro negativo
+const negativeFilter = (node) => {
+  if (!filters.negative) {
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = 255 - data[i]; // rojo
+      data[i + 1] = 255 - data[i + 1]; // verde
+      data[i + 2] = 255 - data[i + 2]; // azul
+    }
+    ctx.putImageData(imageData, 0, 0);
+    filters.negative = true;
+    node.classList.add("selected-filter");
+  } else {
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = 255 - data[i]; // rojo
+      data[i + 1] = 255 - data[i + 1]; // verde
+      data[i + 2] = 255 - data[i + 2]; // azul
+    }
+    ctx.putImageData(imageData, 0, 0);
+    filters.negative = false;
+    node.classList.remove("selected-filter");
   }
-  ctx.putImageData(imageData, 0, 0); //se pasan los nuevos valores al context
 };
-////////////////NEGATIVO///////////////////
-////////////////SATURATION///////////////////
-//boton para la saturacion
-document.getElementById("saturation-btn").addEventListener("click", (e) => {
-  let saturation = 5;
-  modifySaturation(saturation);
-});
 //funcion para aplicar el filtro de saturacion
-const modifySaturation = (saturation) => {
-  let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  for (var i = 0; i < imageData.data.length; i += 4) {
-    var r = imageData.data[i];
-    var g = imageData.data[i + 1];
-    var b = imageData.data[i + 2];
+const saturationFilter = (node) => {
+  let saturation = 5;
+  if (!filters.saturation) {
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < imageData.data.length; i += 4) {
+      var r = imageData.data[i];
+      var g = imageData.data[i + 1];
+      var b = imageData.data[i + 2];
 
-    // Convertir a formato HSL
-    var hsl = rgbToHsl(r, g, b);
+      // se pasa el color a hsl
+      var hsl = rgbToHsl(r, g, b);
 
-    // Ajustar la saturación
-    hsl[1] *= saturation;
+      // se ajusta la saturacion
+      hsl[1] *= saturation;
 
-    // Convertir de nuevo a formato RGB
-    var rgb = hslToRgb(hsl[0], hsl[1], hsl[2]);
+      // pasamos de nuevo a rgb
+      var rgb = hslToRgb(hsl[0], hsl[1], hsl[2]);
 
-    imageData.data[i] = rgb[0]; // Componente rojo
-    imageData.data[i + 1] = rgb[1]; // Componente verde
-    imageData.data[i + 2] = rgb[2]; // Componente azul
+      imageData.data[i] = rgb[0]; // r
+      imageData.data[i + 1] = rgb[1]; // g
+      imageData.data[i + 2] = rgb[2]; // b
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+    filters.saturation = true;
+    node.classList.add("selected-filter");
+  } else {
+    drawImage();
+    filters.saturation = false;
+    node.classList.remove("selected-filter");
   }
-
-  ctx.putImageData(imageData, 0, 0);
 };
-////////////////SATURATION///////////////////
 
-////////////////SEPIA///////////////////
-//boton sepia
-document.getElementById("sepia-btn").addEventListener("click", () => {
-  modifySepia();
-});
 //funcion para el filtro sepia
-const modifySepia = () => {
-  let imageData = ctx.getImageData(0, 0, canvas.width, canvas.width);
-  let data = imageData.data;
-  for (let i = 0; i < data.length; i += 4) {
-    var r = data[i];
-    var g = data[i + 1];
-    var b = data[i + 2];
+const sepiaFilter = (node) => {
+  if (!filters.sepia) {
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.width);
+    let data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      var r = data[i];
+      var g = data[i + 1];
+      var b = data[i + 2];
 
-    var sepiaR = r * 0.393 + g * 0.769 + b * 0.189;
-    var sepiaG = r * 0.349 + g * 0.686 + b * 0.168;
-    var sepiaB = r * 0.272 + g * 0.534 + b * 0.131;
+      var sepiaR = r * 0.393 + g * 0.769 + b * 0.189;
+      var sepiaG = r * 0.349 + g * 0.686 + b * 0.168;
+      var sepiaB = r * 0.272 + g * 0.534 + b * 0.131;
 
-    data[i] = sepiaR * 1;
-    data[i + 1] = sepiaG * 1;
-    data[i + 2] = sepiaB * 1;
+      data[i] = sepiaR * 1;
+      data[i + 1] = sepiaG * 1;
+      data[i + 2] = sepiaB * 1;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    node.classList.add("selected-filter");
+    filters.sepia = true;
+  } else {
+    drawImage();
+    filters.sepia = false;
+    node.classList.remove("selected-filter");
   }
-  ctx.putImageData(imageData, 0, 0);
 };
-////////////////SEPIA///////////////////
 
-////////////////BINARIZATION///////////////////
-//boton binarizacion
-document.getElementById("binarization-btn").addEventListener("click", () => {
-  let umbral = 100;
-  modifyBinarization(umbral);
-});
 //funcion binarizacion
-const modifyBinarization = (umbral) => {
-  let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  let data = imageData.data;
-  for (let i = 0; i < data.length; i += 4) {
-    let rojo = data[i];
-    let verde = data[i + 1];
-    let azul = data[i + 2];
-    let escalaDeGrises = (rojo + verde + azul) / 3;
-    let colorBinarizado = escalaDeGrises >= umbral ? 255 : 0;
-    data[i] = data[i + 1] = data[i + 2] = colorBinarizado;
+const binarizationFilter = (node) => {
+  let umbral = 100;
+  if (!filters.binarization) {
+    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      let rojo = data[i];
+      let verde = data[i + 1];
+      let azul = data[i + 2];
+      let escalaDeGrises = (rojo + verde + azul) / 3;
+      let colorBinarizado = escalaDeGrises >= umbral ? 255 : 0;
+      data[i] = data[i + 1] = data[i + 2] = colorBinarizado;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    filters.binarization = true;
+    node.classList.add("selected-filter");
+  } else {
+    if (img) {
+      drawImage();
+    }
+    filters.binarization = false;
+    node.classList.remove("selected-filter");
   }
-  ctx.putImageData(imageData, 0, 0);
 };
 ////////////////BINARIZATION///////////////////
 
